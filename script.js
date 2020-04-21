@@ -53,6 +53,7 @@ function start() {
 
 function showQuestion() {
     $(".choices").text("");
+    $("#result").text("");
 
     intervalId = setInterval(function() {
         time--;
@@ -82,17 +83,23 @@ function nextQuestion() {
     showQuestion();
 }
 
-function checkAnswer() {
+function checkAnswer(event) {
     clearInterval(intervalId); 
    
-    console.log($(this));
-    if ($(this).className === ".choices") {
-        var myAnswer = $(this).text(); 
+    // if ($(this).className === ".choices") {
+    //     var myAnswer = $(this).text();
+    // }
+    
+    if (event.target.matches("button")) {
+        var myAnswer = event.target.textContent.toString();
         if (myAnswer === questions[qIndex].answer) {
-            alert("Correct")
+            $("#result").text("Correct");
+            score++;
+            $("#score").text("Score: " + score);
         } else {
             $("#result").text("Incorrect");
             score--; 
+            $("#score").text("Score: " + score);
         }
     }
     setTimeout(nextQuestion,2000);
@@ -102,11 +109,12 @@ function checkAnswer() {
 function end() {
     clearInterval(intervalId);
     $("body").innerHTML("Game over, You scored " + score);
-    settimeout(showHighScore,2);
+    setTimeout(showHighScore,2);
 }
 
 function showHighScore() {
     var name = prompt("Please enter your name");
+    var highScore = localStorage.getItem("score")
 }
  $("#start").on("click",start);
  $(".choices").on("click",checkAnswer);
