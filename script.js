@@ -15,7 +15,7 @@ var questions = [
         answer: "They identify different information used in programs"
     },
     {
-        question: "What What data type is used in this code block?      isTouching = true;",
+        question: "What data type is used in this code block?      isTouching = true;",
         choices: ["number", "boolean", "string", "alphabet"],
         answer: "boolean"
     },
@@ -39,8 +39,9 @@ var choicesBtn;
 
 
 function start() {
-    time = 120;
+    time = 10;
     score = 0;
+    qIndex = 0;
     $("#score").text("Score: " + score);
     $("#start").removeClass("show");
     $("#allChoices").addClass("show");
@@ -52,17 +53,13 @@ function start() {
 };
 
 function showQuestion() {
+
     $(".choices").text("");
     $("#result").text("");
+    $(".choices").prop("disabled",false);
 
-    intervalId = setInterval(function() {
-        time--;
-        $("#timer").text("Time: "+ time + " seconds left");
-        if (time <= 0) {
-            end();
-        }
-        return;
-    },1000);
+    intervalId = setInterval(updateTime
+    ,1000);
 
     $("#question").text(questions[qIndex].question);
 
@@ -75,6 +72,15 @@ function showQuestion() {
 
 }
 
+function updateTime() {
+    time--;
+    $("#timer").text("Time: "+ time + " seconds left");
+    if (time <= 0) {
+        end();
+    }
+    return;
+}
+
 function nextQuestion() {
     qIndex++; 
     if (qIndex === questions.length) {
@@ -85,6 +91,7 @@ function nextQuestion() {
 
 function checkAnswer(event) {
     clearInterval(intervalId); 
+    $(".choices").prop("disabled",true);
    
     // if ($(this).className === ".choices") {
     //     var myAnswer = $(this).text();
@@ -108,13 +115,41 @@ function checkAnswer(event) {
 
 function end() {
     clearInterval(intervalId);
-    $("body").innerHTML("Game over, You scored " + score);
-    setTimeout(showHighScore,2);
+    $(".timer").text("Game over, You scored " + score + "");
+    setTimeout(showHighScore,2000);
+    $("#question").text("");
+    $("#start").addClass("show");
+    $("#allChoices").removeClass("show");
+    return;
 }
 
 function showHighScore() {
     var name = prompt("Please enter your name");
-    var highScore = localStorage.getItem("score")
+    var high_scores = localStorage.getItem("scores");
+
+  if (!high_scores) {
+    high_scores = [];
+  } else {
+    high_scores = JSON.parse(high_scores);
+  }
+
+  high_scores.push({ name: name, count: score });
+
+  localStorage.setItem("scores", JSON.stringify(high_scores));
+
+  high_scores.sort(function (a, b) {
+    return b.count - a.count;
+  });
+
+  var contentUL = $("<ul>");
+  for (var i = 0; i < high_scores.length; i++) {
+      var contentLI = $("<li>").text("Name: " + high_scores[i].name + " Scores: " + high_scores[i].count);
+      contentUL.append(contentLI);
+  }
+  $("#scores").append(contentUL);
+
+  return;
 }
+
  $("#start").on("click",start);
  $(".choices").on("click",checkAnswer);
