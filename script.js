@@ -53,7 +53,6 @@ function start() {
 };
 
 function showQuestion() {
-
     $(".choices").text("");
     $("#result").text("");
     $(".choices").prop("disabled",false);
