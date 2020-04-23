@@ -45,7 +45,7 @@ function start() {
     $("#score").text("Score: " + score);
     $("#start").removeClass("show");
     $("#allChoices").addClass("show");
-
+    $("ul").remove(); 
     showQuestion(); 
 
     return;
@@ -77,6 +77,7 @@ function updateTime() {
     $("#timer").text("Time: "+ time + " seconds left");
     if (time <= 0) {
         end();
+        return;
     }
     return;
 }
@@ -85,6 +86,7 @@ function nextQuestion() {
     qIndex++; 
     if (qIndex === questions.length) {
         end();
+        return;
     }
     showQuestion();
 }
@@ -115,7 +117,7 @@ function checkAnswer(event) {
 
 function end() {
     clearInterval(intervalId);
-    $(".timer").text("Game over, You scored " + score + "");
+    $("#timer").text("Game over, You scored " + score + "");
     setTimeout(showHighScore,2000);
     $("#question").text("");
     $("#start").addClass("show");
